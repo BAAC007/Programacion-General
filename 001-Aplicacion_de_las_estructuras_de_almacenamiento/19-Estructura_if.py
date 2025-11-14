@@ -1,0 +1,14 @@
+print("Lista de la compra v0.1")
+
+lista_de_la_compra = []
+
+while = True
+    print("Selecciona una opcion: ")
+    print("1.Añadir elementos a la lista.")
+    print("2.Leer la lista")
+    opcion = int(input("tu opcion: "))
+
+    if opcion == 1:
+
+
+    elif opcion == 2:
