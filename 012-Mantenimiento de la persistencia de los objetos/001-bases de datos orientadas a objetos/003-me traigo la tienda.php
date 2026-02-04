@@ -180,7 +180,7 @@
         }
         console.log(pedido)
         // Y los envio para guardar
-        fetch("guardamongo.php?json="+JSON.stringify(pedido))
+        fetch("guardamongo.php?json=" + encodeURIComponent(JSON.stringify(pedido)))
     }
 </script>
 
