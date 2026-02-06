@@ -1,0 +1,2 @@
+En este ejercicio podremos enlistar contenido de las carpetas desde
+un programa en python, ademas de recorrer las carpetas, filtrar por tamaño, guardar la información en un archivo .txt y mostrar la información resultante.
