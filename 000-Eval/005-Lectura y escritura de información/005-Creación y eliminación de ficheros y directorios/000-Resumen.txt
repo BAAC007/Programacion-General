@@ -1,0 +1,3 @@
+Con este programa podremos crear una carpeta llamada 'micarpeta',
+comprimirla para hacerla un archivo zip y por ultimo eliminar la carpeta
+que no esta comprimida
