@@ -1,0 +1,267 @@
+<!doctype html>
+<html>
+
+<head>
+    <style>
+        #nave {
+            position: absolute;
+            width: 50px;
+        }
+
+        .estrella {
+            width: 50px;
+        }
+
+        .bala {
+            width: 20px;
+            position: absolute;
+        }
+
+        body {
+            background: url("espacio.jpg");
+            background-size: cover;
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="nave.png" id="nave">
+</body>
+<script>
+    //Variables globales.
+    let anchopagina = window.innerWidth
+    let altopagina = window.innerHeight
+
+
+    //Primero declaramos una clase madre. (abstracta)
+
+    class Entidad {
+        constructor(x, y, a, v) {
+            this.posx = x;
+            this.posy = y;
+            this.angulo = a;
+            this.velocidad = v;
+        }
+    }
+
+    // luego declaramos las clases concretas
+
+    class Bala extends Entidad {
+        constructor(x, y, a, v) {
+            super(x, y, a, v);
+        }
+    }
+
+    class Jugador extends Entidad {
+        constructor(x, y, a, v) {
+            super(x, y, a, v);
+        }
+    }
+    class Estrella extends Entidad {
+        constructor(x, y, a, e, v) {
+            super(x, y, a, v);
+            this.escala = e;
+        }
+    }
+
+    // Voy a crear estrellas
+    let numero_estrellas = 30;													// Digo cuantas estrellas quiero
+    let estrella = [];																	// Creo un array vacío
+    for (let i = 0; i < numero_estrellas; i++) {							// Recorro un bucle
+        let posx_aleatoria = Math.random() * anchopagina;				// posx aleatoria entre 0 y ancho
+        let posy_aleatoria = Math.random() * altopagina;				// posy aleatoria entre 0 y alto
+        let angulo_aleatorio = Math.random() * 360;
+        let escala_aleatoria = Math.random() * 1 + 0.5; // Escala entre 0.5 y 1.5
+        let velocidad_aleatoria = Math.random() * 3 + 1;
+        estrella.push(new Estrella(
+            posx_aleatoria,
+            posy_aleatoria,
+            angulo_aleatorio,
+            escala_aleatoria,
+            velocidad_aleatoria
+        ))	// Creo una nueva estrella
+    }
+    // Creo balas
+    let balas = [];
+
+
+    // Ahora creo una instancia del jugador
+    let nave = document.querySelector("#nave");
+    let InstanciaJugador = new Jugador(
+        Math.random() * anchopagina,
+        Math.random() * altopagina,
+        0, 0
+    )
+
+    nave.style.left = InstanciaJugador.posx + "px";
+    nave.style.top = InstanciaJugador.posy + "px";
+
+    // Sistema de teclas presionadas para movimiento fluido
+    let teclas = {
+        w: false,
+        s: false,
+        a: false,
+        d: false
+    };
+
+    document.onkeydown = function (tecla) {
+        switch (tecla.keyCode) {
+            case 87: teclas.w = true; break;  // W
+            case 83: teclas.s = true; break;  // S
+            case 65: teclas.a = true; break;  // A
+            case 68: teclas.d = true; break;  // D
+            case 32: disparar(); break;       // Espacio
+        }
+    };
+
+    document.onkeyup = function (tecla) {
+        switch (tecla.keyCode) {
+            case 87: teclas.w = false; break;
+            case 83: teclas.s = false; break;
+            case 65: teclas.a = false; break;
+            case 68: teclas.d = false; break;
+        }
+    };
+
+    function disparar() {
+        // Crear bala en el centro de la nave
+        balas.push(new Bala(
+            InstanciaJugador.posx + 15,  // Centrar con la nave (50px/2 - 20px/2 = 15)
+            InstanciaJugador.posy,
+            -90,  // Ángulo hacia arriba
+            10    // Velocidad de la bala
+        ));
+        
+        let nueva_bala = document.createElement("img");
+        nueva_bala.classList.add("bala");
+        nueva_bala.src = "bala.png";
+        nueva_bala.style.left = (InstanciaJugador.posx + 15) + "px";
+        nueva_bala.style.top = InstanciaJugador.posy + "px";
+        document.body.appendChild(nueva_bala);
+    }
+
+    // Voy a dibujar estrellas
+    for (let i = 0; i < numero_estrellas; i++) {
+        let nueva_estrella = document.createElement("img"); // Creo una nueva imagen
+        nueva_estrella.classList.add("estrella")								// Le añado la clase estrella
+        nueva_estrella.src = "estrella.png"											// Cargo la imagen de la estrellas
+        nueva_estrella.style.position = "absolute"					// Le pongo absoluto para poder mover con libertad
+        nueva_estrella.style.left = estrella[i].posx + "px"					// Le pongo su posicion X
+        nueva_estrella.style.top = estrella[i].posy + "px"						// Le pongo su posicion Y
+        nueva_estrella.style.transform = "rotate(" + estrella[i].angulo + "deg) scale(" + estrella[i].escala + ")"
+        document.querySelector("body").appendChild(nueva_estrella)	// Añado la estrella al body
+    }
+
+    // Agrega esto al final de tu script
+    function cicloJuego() {
+        // MOVER NAVE FLUIDAMENTE
+        let velocidadNave = 5;
+        
+        if (teclas.w) InstanciaJugador.posy -= velocidadNave;
+        if (teclas.s) InstanciaJugador.posy += velocidadNave;
+        if (teclas.a) InstanciaJugador.posx -= velocidadNave;
+        if (teclas.d) InstanciaJugador.posx += velocidadNave;
+        
+        // Mantener nave dentro de pantalla
+        InstanciaJugador.posx = Math.max(0, Math.min(InstanciaJugador.posx, window.innerWidth - 50));
+        InstanciaJugador.posy = Math.max(0, Math.min(InstanciaJugador.posy, window.innerHeight - 50));
+        
+        nave.style.left = InstanciaJugador.posx + "px";
+        nave.style.top = InstanciaJugador.posy + "px";
+
+        // Mover cada estrella
+        let elementosEstrellas = document.querySelectorAll(".estrella");
+        for (let i = 0; i < estrella.length; i++) {
+            // Convertir ángulo a radianes
+            let radianes = estrella[i].angulo * Math.PI / 180;
+
+            // Calcular movimiento en X e Y
+            estrella[i].posx += Math.cos(radianes) * estrella[i].velocidad;
+            estrella[i].posy += Math.sin(radianes) * estrella[i].velocidad;
+
+            // Si sale de la pantalla, reaparecer del otro lado
+            if (estrella[i].posx < -50) estrella[i].posx = window.innerWidth;
+            if (estrella[i].posx > window.innerWidth) estrella[i].posx = -50;
+            if (estrella[i].posy < -50) estrella[i].posy = window.innerHeight;
+            if (estrella[i].posy > window.innerHeight) estrella[i].posy = -50;
+
+            // Actualizar posición visual
+            elementosEstrellas[i].style.left = estrella[i].posx + "px";
+            elementosEstrellas[i].style.top = estrella[i].posy + "px";
+        }
+
+        // MOVER BALAS
+        let elementosBalas = document.querySelectorAll(".bala");
+        for (let i = 0; i < balas.length; i++) {
+            let radianes = balas[i].angulo * Math.PI / 180;
+            balas[i].posx += Math.cos(radianes) * balas[i].velocidad;
+            balas[i].posy += Math.sin(radianes) * balas[i].velocidad;
+            
+            elementosBalas[i].style.left = balas[i].posx + "px";
+            elementosBalas[i].style.top = balas[i].posy + "px";
+            
+            // Eliminar balas que salen de pantalla
+            if (balas[i].posy < -50) {
+                balas.splice(i, 1);
+                elementosBalas[i].remove();
+                i--; // Ajustar índice
+            }
+        }
+
+        // Verificar colisiones
+        verificarColisiones();
+
+        // Repetir el ciclo
+        requestAnimationFrame(cicloJuego);
+    }
+
+    // Iniciar el ciclo
+    cicloJuego();
+
+    function verificarColisiones() {
+        let elementosEstrellas = document.querySelectorAll(".estrella");
+
+        for (let i = 0; i < estrella.length; i++) {
+            // Calcular distancia entre estrella y jugador
+            let dx = estrella[i].posx - InstanciaJugador.posx;
+            let dy = estrella[i].posy - InstanciaJugador.posy;
+            let distancia = Math.sqrt(dx * dx + dy * dy);
+
+            // Si hay colisión (ajusta 50 según el tamaño de tu nave)
+            if (distancia < 50) {
+                // Cambiar dirección aleatoria
+                estrella[i].angulo = Math.random() * 360;
+
+                // Cambiar velocidad aleatoria
+                estrella[i].velocidad = Math.random() * 5 + 1;
+
+                // Efecto visual (explosión)
+                crearExplosion(estrella[i].posx, estrella[i].posy);
+            }
+        }
+    }
+
+    function crearExplosion(x, y) {
+        let explosion = document.createElement("div");
+        explosion.style.position = "absolute";
+        explosion.style.left = x + "px";
+        explosion.style.top = y + "px";
+        explosion.style.width = "100px";
+        explosion.style.height = "100px";
+        explosion.style.background = "radial-gradient(circle, yellow 0%, orange 50%, transparent 100%)";
+        explosion.style.borderRadius = "50%";
+        explosion.style.opacity = "0.8";
+        explosion.style.zIndex = "10";
+        document.body.appendChild(explosion);
+
+        // Animación de desaparición
+        setTimeout(() => {
+            explosion.style.opacity = "0";
+            setTimeout(() => explosion.remove(), 300);
+        }, 100);
+    }
+</script>
+
+</html>
