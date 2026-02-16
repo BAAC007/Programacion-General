@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+  </head>
+  <body>
+    <div id="tiempo">00:60</div>
+    <button>Comenzar</button>
+    <script>
+        // Primero declaro condiciones iniciales
+        let boton = document.querySelector("button");
+        let tiempo = 60
+        // Escucho cuando pulsa el boton
+        boton.onclick = function(){
+            temporizador = setTimeout(bucle,1000)
+        }
+        // Entro en el bucle
+        function bucle(){
+            tiempo--
+            document.querySelector("#tiempo").textContent = "00:"+tiempo // Actualizo marcador
+            clearTimeout(temporizador)
+            temporizador = setTimeout(bucle,1000)
+        }
+    </script>
+  </body>
+</html>
