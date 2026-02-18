@@ -22,7 +22,7 @@ from peft import LoraConfig, get_peft_model
 # ------------------------------------------------------------
 # CONFIG
 # ------------------------------------------------------------
-DATA_FILE = "004-preentrenamiento relleno.jsonl"
+DATA_FILE = "/var/www/html/mi_area/Materias/Programacion-General/011-inteligencia artificial/002-Entrenamiento/003-Entrenamiento dia 2/004-Preentrenamiento relleno.jsonl"
 
 # Primary (too big for 8GB RAM unless quantized)
 PRIMARY_MODEL = "microsoft/Phi-3-mini-4k-instruct"
